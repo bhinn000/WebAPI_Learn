@@ -5,6 +5,9 @@ namespace WebAPI_Learn.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]//list all possible responses so that we can get documented response
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public class StudentsController : ControllerBase
     {
 
@@ -27,13 +30,16 @@ namespace WebAPI_Learn.Controllers
         }
 
         [HttpGet("{id:int}", Name = "GetAStudentByID")] //take id of type integer
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]//list all possible responses so that we can get documented response
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<Student> GetAStudentByID(int id)
         {
             if (id <= 0)
             {
                 return BadRequest();//400 --client error ; 500 --server error
             }
-            var student=CollegeRepository.Students.Where(n => n.ID == id).FirstOrDefault()
+            var student = CollegeRepository.Students.Where(n => n.ID == id).FirstOrDefault();
             if (student == null)
             {
                 return NotFound("The student is not there");//404--not found
@@ -55,6 +61,7 @@ namespace WebAPI_Learn.Controllers
         //}
 
         [HttpDelete("{id}", Name = "DeleteAStudentByID")]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public bool DeleteStudent(int id)
         {
             var student = CollegeRepository.Students.Where(n => n.ID == id).FirstOrDefault();
