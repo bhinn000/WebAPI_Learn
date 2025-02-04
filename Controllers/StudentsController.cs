@@ -18,9 +18,20 @@ namespace WebAPI_Learn.Controllers
         }
 
         [HttpGet("All" , Name = "GetAllStudentName")] //get all students
-        public IEnumerable<Student> GetAllStudentName()
+        public IEnumerable<StudentDTO> GetAllStudentName()
         {
-            return CollegeRepository.Students;
+            //return CollegeRepository.Students;
+            //business logic level which will convert the data from dll , use dto concept here
+            //var StudentDTO = new List<StudentDTO>();
+            var StudentDTO1 = CollegeRepository.Students.Select(s => new StudentDTO() //now convert student list to studentDto list
+            {
+                ID=s.ID,
+                Roll=s.Roll,
+                Symbol=s.Symbol,
+                StudentName=s.StudentName,
+            });
+            return StudentDTO1;
+            
         }
 
         [HttpGet("{sym:alpha}", Name = "GetAStudentBySymbol")] //https://localhost:7226/api/Students/GetAStudentBySymbol?symbol1=A10
@@ -30,10 +41,7 @@ namespace WebAPI_Learn.Controllers
         }
 
         [HttpGet("{id:int}", Name = "GetAStudentByID")] //take id of type integer
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]//list all possible responses so that we can get documented response
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<Student> GetAStudentByID(int id)
+        public ActionResult<StudentDTO> GetAStudentByID(int id)
         {
             if (id <= 0)
             {
@@ -44,21 +52,15 @@ namespace WebAPI_Learn.Controllers
             {
                 return NotFound("The student is not there");//404--not found
             }
-            return Ok(student); //200
+            var studentDTO = new StudentDTO()
+            {
+                ID = student.ID,
+                Roll=student.Roll,
+                Symbol=student.Symbol,
+                StudentName=student.StudentName,
+            };
+            return Ok(studentDTO); //200
         }
-
-        //***cause route conflict
-        //[HttpGet("{id:int}", Name = "GetAStudentByID")] //take id of type integer
-        //public Student GetAStudentByID(int id)
-        //{
-        //return CollegeRepository.Students.Where(n => n.ID == id).FirstOrDefault();
-        //}
-
-        //[HttpGet("{id:int}", Name = "GetAStudentByRoll")] //take id of type integer
-        //public Student GetAStudentByRoll(int id)
-        //{
-        //    return CollegeRepository.Students.Where(n => n.ID == id).FirstOrDefault();
-        //}
 
         [HttpDelete("{id}", Name = "DeleteAStudentByID")]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
