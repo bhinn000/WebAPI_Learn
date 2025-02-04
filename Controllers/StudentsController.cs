@@ -18,7 +18,6 @@ namespace WebAPI_Learn.Controllers
         public IEnumerable<Student> GetAllStudentName()
         {
             return CollegeRepository.Students;
-
         }
 
         [HttpGet("{sym:alpha}", Name = "GetAStudentBySymbol")] //https://localhost:7226/api/Students/GetAStudentBySymbol?symbol1=A10
@@ -28,9 +27,18 @@ namespace WebAPI_Learn.Controllers
         }
 
         [HttpGet("{id:int}", Name = "GetAStudentByID")] //take id of type integer
-        public Student GetAStudentByID(int id)
+        public ActionResult<Student> GetAStudentByID(int id)
         {
-            return CollegeRepository.Students.Where(n => n.ID == id).FirstOrDefault();
+            if (id <= 0)
+            {
+                return BadRequest();//400 --client error ; 500 --server error
+            }
+            var student=CollegeRepository.Students.Where(n => n.ID == id).FirstOrDefault()
+            if (student == null)
+            {
+                return NotFound("The student is not there");//404--not found
+            }
+            return Ok(student); //200
         }
 
         //***cause route conflict
