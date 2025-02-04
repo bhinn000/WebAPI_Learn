@@ -89,7 +89,8 @@ namespace WebAPI_Learn.Controllers
             };
             studentDTO.ID =student.ID;
             CollegeRepository.Students.Add(student);
-            return Ok(student);
+            //return Ok(student);
+            return CreatedAtRoute("GetAStudentByID", new { id = studentDTO.ID} , studentDTO);//give the url for newly created Student , 201 
         }
     }
 }
