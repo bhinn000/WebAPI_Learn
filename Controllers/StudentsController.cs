@@ -10,7 +10,7 @@ namespace WebAPI_Learn.Controllers
     [ProducesResponseType(StatusCodes.Status200OK)]
     public class StudentsController : ControllerBase
     {
-
+        //****HTTP GET
         [HttpGet] //get all students 
         public IEnumerable<Student> GetMoreStudentName()
         {
@@ -69,6 +69,27 @@ namespace WebAPI_Learn.Controllers
             var student = CollegeRepository.Students.Where(n => n.ID == id).FirstOrDefault();
             CollegeRepository.Students.Remove(student);
             return true;
+        }
+
+        //**HTTP POST
+        [HttpPost("create")] //api/Students/create
+        public ActionResult<Student> CreateStudent([FromBody] StudentDTO studentDTO) //creating 'Student' from 'StudentDTO'
+        {
+            if (studentDTO == null) 
+            { 
+                return BadRequest();
+            }
+            int newID = CollegeRepository.Students.LastOrDefault().ID + 1;
+            Student student = new Student
+            {
+                ID=newID,
+                StudentName= studentDTO.StudentName,
+                Roll= studentDTO.Roll,
+                Symbol= studentDTO.Symbol,
+            };
+            studentDTO.ID =student.ID;
+            CollegeRepository.Students.Add(student);
+            return Ok(student);
         }
     }
 }
