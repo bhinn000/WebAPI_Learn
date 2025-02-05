@@ -6,7 +6,7 @@ namespace WebAPI_Learn.Models
 {
     public class StudentDTO
     {
-        [Range(10,20)]
+        [Range(1,20)]
         public int ID { get; set; }
 
         [Required(ErrorMessage = "Student name is required")]
