@@ -79,6 +79,11 @@ namespace WebAPI_Learn.Controllers
             { 
                 return BadRequest();
             }
+            if (studentDTO.Roll < 0)
+            {
+                ModelState.AddModelError("Roll number error", "Roll number cant be negtive");
+                return BadRequest(ModelState);
+            }
             int newID = CollegeRepository.Students.LastOrDefault().ID + 1;
             Student student = new Student
             {
