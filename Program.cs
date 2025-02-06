@@ -1,9 +1,10 @@
+using Serilog;
 using WebAPI_Learn.MyLoggings;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders(); //by default , it include console , debug and event window
-builder.Logging.AddDebug(); //to add debug window only
-//builder.Logging.AddConsole();
+builder.Logging.AddDebug(); //to add debug window only ; changing log provider
+builder.Logging.AddConsole();
 
 
 // Add services to the container.
@@ -19,6 +20,13 @@ builder.Services.AddScoped<IMyLoggings, LogToFile>();
 //AddSingleton , 1 number of object of DI engine is created
 //AddTransient , n number of object of DI engine is created
 //AddScoped , n*n number of object of DI engine is created for n request and n call for di engine
+
+Log.Logger = new LoggerConfiguration().MinimumLevel.Information()
+    .WriteTo.File("Log/Log.txt" , rollingInterval:RollingInterval.Minute)
+    .CreateLogger();
+//builder.Host.UseSerilog();//this will allow to write in file only , cant log to console
+//to allow to log to console or debug too , you can do following:
+builder.Logging.AddSerilog();
 
 var app = builder.Build();
 
