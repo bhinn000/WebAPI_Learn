@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebAPI_Learn.Models;
+using WebAPI_Learn.MyLoggings;
 
 namespace WebAPI_Learn.Controllers
 {
@@ -11,6 +12,14 @@ namespace WebAPI_Learn.Controllers
     [ProducesResponseType(StatusCodes.Status201Created)]
     public class StudentsController : ControllerBase
     {
+        //private readonly IMyLoggings _myLoggings;
+        private readonly ILogger<StudentsController> _logger; // in built logging mechanism ; can only log to debug , console but not to db or text file
+
+        public StudentsController(ILogger<StudentsController> logger)
+        {
+            //_myLoggings= myLoggings;
+            _logger = logger; 
+        }
         //****HTTP GET
         [HttpGet] //get all students 
         public IEnumerable<Student> GetMoreStudentName()
@@ -21,6 +30,8 @@ namespace WebAPI_Learn.Controllers
         [HttpGet("All" , Name = "GetAllStudentName")] //get all students
         public IEnumerable<StudentDTO> GetAllStudentName()
         {
+            //_myLoggings.Log("My message");
+            _logger.LogInformation("All the students have been fetched");
             //return CollegeRepository.Students;
             //business logic level which will convert the data from dll , use dto concept here
             //var StudentDTO = new List<StudentDTO>();
@@ -51,6 +62,7 @@ namespace WebAPI_Learn.Controllers
             var student = CollegeRepository.Students.Where(n => n.ID == id).FirstOrDefault();
             if (student == null)
             {
+                _logger.LogWarning($"The id {id} doesnt exist");
                 return NotFound("The student is not there");//404--not found
             }
             var studentDTO = new StudentDTO()
@@ -77,7 +89,8 @@ namespace WebAPI_Learn.Controllers
         public ActionResult<Student> CreateStudent([FromBody] StudentDTO studentDTO) //creating 'Student' from 'StudentDTO'
         {
             if (studentDTO == null) 
-            { 
+            {
+                _logger.LogError("You have to provide the model ");
                 return BadRequest();
             }
             if (studentDTO.Roll < 0)

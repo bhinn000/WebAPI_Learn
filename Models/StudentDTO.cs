@@ -25,7 +25,7 @@ namespace WebAPI_Learn.Models
 
         public string Password { get; set; }
 
-        [Compare(nameof(Password))] //compares the value of Password with ConfirmPassword
+        //[Compare(nameof(Password))] //compares the value of Password with ConfirmPassword
         public string ConfirmPassword { get; set; }
 
     }
