@@ -1,5 +1,7 @@
 using Serilog;
+using WebAPI_Learn.Data;
 using WebAPI_Learn.MyLoggings;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders(); //by default , it include console , debug and event window
@@ -9,11 +11,11 @@ builder.Logging.AddConsole();
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(); //adding inbuilt service
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IMyLoggings, LogToFile>();
+builder.Services.AddScoped<IMyLoggings, LogToFile>(); //registering custom service
 //builder.Services.AddScoped<IMyLoggings, LogToDB>();
 //builder.Services.AddScoped<IMyLoggings, LogToServerMemory>();
 
@@ -27,6 +29,13 @@ Log.Logger = new LoggerConfiguration().MinimumLevel.Information()
 //builder.Host.UseSerilog();//this will allow to write in file only , cant log to console
 //to allow to log to console or debug too , you can do following:
 builder.Logging.AddSerilog();
+
+builder.Services.AddDbContext<CollegeDBContext>(
+    options=>
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("CollegeDBConnection"));  //GetConnectionString is helper file
+    }
+    );
 
 var app = builder.Build();
 
@@ -44,3 +53,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+

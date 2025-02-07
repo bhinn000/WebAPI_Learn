@@ -1,5 +1,6 @@
 ﻿namespace WebAPI_Learn.MyLoggings
 {
+    //implementing service
     public class LogToDB: IMyLoggings
     {
         public void Log(string message)

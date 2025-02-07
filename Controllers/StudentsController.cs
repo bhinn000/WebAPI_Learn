@@ -12,12 +12,13 @@ namespace WebAPI_Learn.Controllers
     [ProducesResponseType(StatusCodes.Status201Created)]
     public class StudentsController : ControllerBase
     {
-        //private readonly IMyLoggings _myLoggings;
+        //private readonly IMyLoggings _myLoggings;// injecting services in controller
         private readonly ILogger<StudentsController> _logger; // in built logging mechanism ; can only log to debug , console but not to db or text file
 
         public StudentsController(ILogger<StudentsController> logger)
         {
-            //_myLoggings= myLoggings;
+            //_myLoggings= myLoggings;// injecting services in controller (using D.I)
+            //_myLoggings = LogToDB(); //withoug using D.I.
             _logger = logger; 
         }
         //****HTTP GET
@@ -30,7 +31,7 @@ namespace WebAPI_Learn.Controllers
         [HttpGet("All" , Name = "GetAllStudentName")] //get all students
         public IEnumerable<StudentDTO> GetAllStudentName()
         {
-            //_myLoggings.Log("My message");
+            //_myLoggings.Log("My message");// injecting services in controller
             _logger.LogInformation("All the students have been fetched");
             //return CollegeRepository.Students;
             //business logic level which will convert the data from dll , use dto concept here

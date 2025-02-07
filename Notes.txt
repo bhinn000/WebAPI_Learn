@@ -1,0 +1,39 @@
+﻿
+using CreateBuilder includes loggings , configuration (appsettings.json , Environment variables ) , DI 
+
+builder is an instance of WebApplicationBuilder, used to configure services and middleware in an ASP.NET Core application.
+
+***
+
+
+Services is a property of builder that provides access to the dependency injection container.Services are the foundation of every ASP.NET Core application and are used through dependency injection
+Services in ASP.NET Core are reusable components that perform specific tasks such as database access, logging, authentication, configuration, or business logic. These services are managed by 
+dependency injection (DI).services are added to the Dependency Injection (DI) container so that they can be used throughout the application
+
+A service is simply a class that provides a functionality that can be used throughout the application. 
+Instead of creating instances of these classes manually, we use Dependency Injection (DI) to inject them where needed.
+public class MyService
+{
+    public string GetMessage()
+    {
+        return "Hello from MyService!";
+    }
+}
+Instead of manually creating an instance of MyService, we register it as a service so that ASP.NET Core can manage it automatically.
+lifetime of a service determines how long an instance remains active.
+Lifetime	Description
+Singleton	A single instance is created and shared for the entire application.
+Scoped	    A new instance is created per HTTP request.
+Transient	A new instance is created every time it is requested.
+--When you add a service (MyService), it is stored in builder.Services.
+You Can Register Built-in and Custom Services
+
+Built-in services: AddControllers(), AddLogging(), AddDbContext<T>(), etc.
+Custom services: AddSingleton<MyService>(), AddScoped<IMyService, MyService>(), etc.
+
+builder.Services.AddControllers(); // Register controllers as services
+builder.Services.AddSingleton<MyService>(); // Register MyService as a Singleton
+***
+
+
+
