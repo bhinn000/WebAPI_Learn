@@ -97,3 +97,20 @@ middleware are executed in sequence and custom middleware are added at the end o
 use : it allows to execute the next line or next middleware , in sequence
 map : it executes only if it matches request
 run : it should be at last , and it doesnt allow to run any other line after it
+
+****
+builder.Services.AddControllers() adds support for controllers to the application's service container, making the necessary services
+available for routing and handling HTTP requests.
+
+app.MapControllers() maps controller routes to the incoming HTTP requests. This tells ASP.NET Core to look for controllers and use their routes to handle requests.
+
+Before Build(): You configure services and middleware using the builder object.
+After Build(): You get the WebApplication object (app) that you use to configure the HTTP request pipeline, map routes, and run the app.
+builder is used to configure.
+builder.Build() is used to create the application instance (WebApplication) that will run.
+
+After all the middleware has been executed, it will reach the controllers to handle the request.
+
+If middleware is placed after controllers, it might not be able to intercept or process requests properly.
+***
+
