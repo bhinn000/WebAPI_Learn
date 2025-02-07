@@ -5,7 +5,6 @@ builder is an instance of WebApplicationBuilder, used to configure services and 
 
 ***
 
-
 Services is a property of builder that provides access to the dependency injection container.Services are the foundation of every ASP.NET Core application and are used through dependency injection
 Services in ASP.NET Core are reusable components that perform specific tasks such as database access, logging, authentication, configuration, or business logic. These services are managed by 
 dependency injection (DI).services are added to the Dependency Injection (DI) container so that they can be used throughout the application
@@ -33,7 +32,64 @@ Custom services: AddSingleton<MyService>(), AddScoped<IMyService, MyService>(), 
 
 builder.Services.AddControllers(); // Register controllers as services
 builder.Services.AddSingleton<MyService>(); // Register MyService as a Singleton
+
 ***
 
+builder :
+builder is used to configure services and set up the web host for your application.
+builder is the main point for configuration and service registration in an ASP.NET Core Web API.
+
+Builder provides methods to configure:
+Services (like controllers, logging, etc.)
+Middleware pipeline (for request handling)
+Application configuration (like settings from appsettings.json or environment variables)
+
+builder.Services
+This property is used to register services for Dependency Injection (DI).
+It’s a collection of all the services your application will use. For example, you can register controllers, database contexts, 
+authentication services, and more.
+
+builder.Logging property is used to configure logging for the application.
 
 
+****
+
+API is about interfacing between two systems (or applications) and allowing them to communicate. It's a contract for how you can request data or actions from a service.
+Middleware is about processing requests before they reach their destination. It manages tasks like authentication, logging, or modifying requests and responses.
+
+An API lets you interact with a service externally (like accessing weather data from a server).
+Middleware works internally within the application (e.g., checking if the user is logged in before allowing access to certain routes).
+
+API: The API defines the endpoints (URLs) that your application can access to interact with the service.
+The API also defines methods (like GET, POST, PUT, DELETE) that determine what kind of action you can perform.
+When you make a request, the API sends back a response. This response contains the data you're asking for, in a specific format (like JSON or XML).
+
+Middleware is like a helper or gatekeeper for your requests. It sits between the request and the final application logic (or response). When a request comes into your application, middleware functions run before the main request handler gets the request. These middleware functions can perform tasks like:
+Authentication (checking if the user is logged in).
+Logging (keeping track of which users accessed which endpoints).
+Error handling (catching errors before they affect the user experience).
+Modifying requests and responses (e.g., adding headers or data).
+Eg: Middleware checks if the user has a valid login session.
+If the user is not logged in, the middleware redirects them to the login page.
+
+*******
+
+1. API (Application Programming Interface):
+What it is: It's like a menu in a restaurant. It shows you all the things (data or actions) that you can ask for and how to ask for them.
+Example: Imagine you have a weather app. You use an API to ask the weather server, "What's the weather like in my city?" The API tells you how to ask and what information you'll get back.
+2. Middleware:
+What it is: It's like a waiter in a restaurant. Before you get your food (or in this case, before a request reaches your app or a service), the waiter might check if you've paid, make sure your order is correct, or add a special sauce.
+Example: In web development, middleware might check if you're logged in before letting you access certain pages or perform actions on a website.
+
+Key Difference:
+API is about giving you access to things (like weather data or services).
+Middleware is about handling what happens before you can access those things (like checking if you're allowed to use a service or adding some logic to a request).
+
+API is a way to expose functionalities for interaction, often over the network, while middleware is more about processing and managing the data or requests before they reach the final destination.
+APIs are typically used for external communication, whereas middleware is more often used for internal processes within an application.
+
+middleware is executed on every request 
+the request has to go through all the middleware mentioned then only directed to the controllers as per url
+
+middleware are executed in sequence and custom middleware are added at the end of sequence
+***
