@@ -93,3 +93,7 @@ the request has to go through all the middleware mentioned then only directed to
 
 middleware are executed in sequence and custom middleware are added at the end of sequence
 ***
+
+use : it allows to execute the next line or next middleware , in sequence
+map : it executes only if it matches request
+run : it should be at last , and it doesnt allow to run any other line after it
