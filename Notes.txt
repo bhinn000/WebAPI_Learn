@@ -112,5 +112,7 @@ builder.Build() is used to create the application instance (WebApplication) that
 After all the middleware has been executed, it will reach the controllers to handle the request.
 
 If middleware is placed after controllers, it might not be able to intercept or process requests properly.
+
 ***
 
+DEPENDENCY INJECTION
