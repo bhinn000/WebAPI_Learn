@@ -33,6 +33,7 @@
             }
         }
 
+        //to execute this , you have comment out Program.cs , similar for other type of dependency injection , now thiss has been executed by registering it to the service
         public static void Main(string[] args)
         {
 
@@ -44,4 +45,4 @@
         }
     }
 }
-}
+

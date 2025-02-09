@@ -6,7 +6,7 @@
         {
             public void PrintDetails()
             {
-                Console.WriteLine("I am saving account");
+                Console.WriteLine("I am saving account from property");
             }
 
         }
@@ -15,7 +15,7 @@
         {
             public void PrintDetails()
             {
-                Console.WriteLine("I am current account");
+                Console.WriteLine("I am current account from property");
             }
 
         }
@@ -37,6 +37,7 @@
 
         }
 
+        //to execute this , you have comment out Program.cs , similar for other type of dependency injection , now thiss has been executed by registering it to the service
         public static void Main(string[] args)
         {
 

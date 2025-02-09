@@ -10,7 +10,7 @@ namespace WebAPI_Learn.DEPENDENCYINJECTION
         {
             public void PrintDetails()
             {
-                Console.WriteLine("I am saving account");
+                Console.WriteLine("I am saving account from constructor");
             }
 
         }
@@ -19,7 +19,7 @@ namespace WebAPI_Learn.DEPENDENCYINJECTION
         {
             public void PrintDetails()
             {
-                Console.WriteLine("I am current account");
+                Console.WriteLine("I am current account from constructor");
             }
 
         }
@@ -48,16 +48,17 @@ namespace WebAPI_Learn.DEPENDENCYINJECTION
 
         }
 
-        public static void Main(string[] args)
-        {
-            IAccount saRef = new SavingAccount();
-            Account account1 = new Account(saRef);//if object of Saving sent , call corresponding method
-            account1.PrintAccountType();
+        //to execute this , you have comment out Program.cs , similar for other type of dependency injection , now thiss has been executed by registering it to the service
+        //public static void Main(string[] args)
+        //{
+        //    IAccount saRef = new SavingAccount();
+        //    Account account1 = new Account(saRef);//if object of Saving sent , call corresponding method
+        //    account1.PrintAccountType();
 
-            IAccount caRef = new CurrentAccount();
-            Account account2 = new Account(caRef);
-            account2.PrintAccountType();
-        }
+        //    IAccount caRef = new CurrentAccount();
+        //    Account account2 = new Account(caRef);
+        //    account2.PrintAccountType();
+        //}
     }
 }
 

@@ -116,3 +116,15 @@ If middleware is placed after controllers, it might not be able to intercept or 
 ***
 
 DEPENDENCY INJECTION
+
+*****
+
+✅ Summary
+1️⃣ Use builder before Build() to register services (Dependency Injection, Controllers, Logging).
+2️⃣ Use builder.Build() to create the app instance (app).
+3️⃣ Use app after Build() to configure middleware and handle requests.
+
+🚀 Always remember:
+✅ builder → Configure services
+✅ builder.Build() → Finalize configuration & create the app
+✅ app → Configure middleware & controllers
