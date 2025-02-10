@@ -44,7 +44,7 @@ namespace WebAPI_Learn.Controllers
                 Email=s.Email,
                 Address=s.Address,
                 StudentName=s.StudentName,
-            });
+            }).ToList();
             return StudentDTO1;
             
         }
@@ -107,8 +107,10 @@ namespace WebAPI_Learn.Controllers
                 StudentName= studentDTO.StudentName,
                 Email = studentDTO.Email,
                 Address = studentDTO.Address,
+                ID=studentDTO.ID
             };
-            studentDTO.ID =student.ID;
+
+            //studentDTO.ID =student.ID;
             _dbContext.Students.Add(student);
             _dbContext.SaveChanges();
             //return Ok(student);
@@ -125,8 +127,8 @@ namespace WebAPI_Learn.Controllers
                 return BadRequest();
             }
             var existingStudent= _dbContext.Students.Where(s=>s.ID==studentDTO.ID).FirstOrDefault();
-            _dbContext.SaveChanges();
             existingStudent.StudentName=studentDTO.StudentName;
+            _dbContext.SaveChanges();
             return NoContent();
         }
     }
