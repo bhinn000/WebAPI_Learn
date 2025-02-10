@@ -18,6 +18,14 @@ namespace WebAPI_Learn.Data
                 new Student{ID=2 , StudentName="Shakya" ,Email="b@gmail.com" , Address="Nepal2"}
             });
 
+            //modifying schema using EF code first method
+            modelBuilder.Entity<Student>(entity =>
+            {
+                entity.Property(n => n.StudentName).IsRequired();
+                entity.Property(n => n.StudentName).IsRequired();
+                entity.Property(n => n.Address).IsRequired(false).HasMaxLength(500);
+                entity.Property(n => n.Email).IsRequired(false).HasMaxLength(500);
+            });
         }
     }
 }
