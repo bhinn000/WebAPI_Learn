@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebAPI_Learn.Data
 {
-    public class Student
+    public class StudentData
     {
         //now these two things are configured in StudentConfig.cs
         //[Key]

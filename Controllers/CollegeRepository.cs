@@ -5,10 +5,10 @@ namespace WebAPI_Learn.Controllers
 {
     public static class CollegeRepository
     {
-        public static List<Student> Students {  get; set; } = new List<Student>
+        public static List<StudentModel> Students {  get; set; } = new List<StudentModel>
             {
-                new Student{ID=01 , StudentName = "Ram" , Roll= 10, Symbol="A10"},
-                new Student{ID=02 , StudentName = "Shyam" , Roll = 20, Symbol="A20"},
+                new StudentModel{ID=01 , StudentName = "Ram" , Address= "USA", Email="ram@g.co"},
+                new StudentModel{ID=02 , StudentName = "Shyam" , Address = "UK", Email="shyam@g.co"},
             };
 
     }

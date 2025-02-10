@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebAPI_Learn.Models;
-using WebAPI_Learn.MyLoggings;
+using WebAPI_Learn.Data;
+
 
 namespace WebAPI_Learn.Controllers
 {
@@ -14,18 +15,19 @@ namespace WebAPI_Learn.Controllers
     {
         //private readonly IMyLoggings _myLoggings;// injecting services in controller
         private readonly ILogger<StudentsController> _logger; // in built logging mechanism ; can only log to debug , console but not to db or text file
-
-        public StudentsController(ILogger<StudentsController> logger)
+        private readonly CollegeDBContext _dbContext;
+       public StudentsController(ILogger<StudentsController> logger, CollegeDBContext dbContext)
         {
             //_myLoggings= myLoggings;// injecting services in controller (using D.I)
             //_myLoggings = LogToDB(); //withoug using D.I.
-            _logger = logger; 
+            _logger = logger;
+            _dbContext = dbContext;
         }
         //****HTTP GET
         [HttpGet] //get all students 
-        public IEnumerable<Student> GetMoreStudentName()
+        public IEnumerable<StudentData> GetMoreStudentName()
         {
-            return CollegeRepository.Students;
+            return _dbContext.Students;
         }
 
         [HttpGet("All" , Name = "GetAllStudentName")] //get all students
@@ -36,22 +38,22 @@ namespace WebAPI_Learn.Controllers
             //return CollegeRepository.Students;
             //business logic level which will convert the data from dll , use dto concept here
             //var StudentDTO = new List<StudentDTO>();
-            var StudentDTO1 = CollegeRepository.Students.Select(s => new StudentDTO() //now convert student list to studentDto list
+            var StudentDTO1 = _dbContext.Students.Select(s => new StudentDTO() //now convert student list to studentDto list
             {
                 ID=s.ID,
-                Roll=s.Roll,
-                Symbol=s.Symbol,
+                Email=s.Email,
+                Address=s.Address,
                 StudentName=s.StudentName,
             });
             return StudentDTO1;
             
         }
 
-        [HttpGet("{sym:alpha}", Name = "GetAStudentBySymbol")] //https://localhost:7226/api/Students/GetAStudentBySymbol?symbol1=A10
-        public Student GetAStudentBySymbol(string symbol1)
-        {
-            return CollegeRepository.Students.Where(n => n.Symbol == symbol1).FirstOrDefault();
-        }
+        //[HttpGet("{sym:alpha}", Name = "GetAStudentBySymbol")] //https://localhost:7226/api/Students/GetAStudentBySymbol?symbol1=A10
+        //public Student GetAStudentBySymbol(string symbol1)
+        //{
+        //    return CollegeRepository.Students.Where(n => n.Symbol == symbol1).FirstOrDefault();
+        //}
 
         [HttpGet("{id:int}", Name = "GetAStudentByID")] //take id of type integer
         public ActionResult<StudentDTO> GetAStudentByID(int id)
@@ -60,7 +62,7 @@ namespace WebAPI_Learn.Controllers
             {
                 return BadRequest();//400 --client error ; 500 --server error
             }
-            var student = CollegeRepository.Students.Where(n => n.ID == id).FirstOrDefault();
+            var student = _dbContext.Students.Where(n => n.ID == id).FirstOrDefault();
             if (student == null)
             {
                 _logger.LogWarning($"The id {id} doesnt exist");
@@ -69,9 +71,9 @@ namespace WebAPI_Learn.Controllers
             var studentDTO = new StudentDTO()
             {
                 ID = student.ID,
-                Roll=student.Roll,
-                Symbol=student.Symbol,
-                StudentName=student.StudentName,
+                Email = student.Email,
+                Address = student.Address,
+                StudentName =student.StudentName,
             };
             return Ok(studentDTO); //200
         }
@@ -80,35 +82,35 @@ namespace WebAPI_Learn.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public bool DeleteStudent(int id)
         {
-            var student = CollegeRepository.Students.Where(n => n.ID == id).FirstOrDefault();
-            CollegeRepository.Students.Remove(student);
+            var student = _dbContext.Students.Where(n => n.ID == id).FirstOrDefault();
+            _dbContext.Students.Remove(student);
             return true;
         }
 
         //**HTTP POST
         [HttpPost("create")] //api/Students/create
-        public ActionResult<Student> CreateStudent([FromBody] StudentDTO studentDTO) //creating 'Student' from 'StudentDTO'
+        public ActionResult<StudentModel> CreateStudent([FromBody] StudentDTO studentDTO) //creating 'Student' from 'StudentDTO'
         {
             if (studentDTO == null) 
             {
                 _logger.LogError("You have to provide the model ");
                 return BadRequest();
             }
-            if (studentDTO.Roll < 0)
+            //if (studentDTO.Roll < 0)
+            //{
+            //    ModelState.AddModelError("Roll number error", "Roll number cant be negtive");
+            //    return BadRequest(ModelState);
+            //}
+
+            StudentData student = new StudentData
             {
-                ModelState.AddModelError("Roll number error", "Roll number cant be negtive");
-                return BadRequest(ModelState);
-            }
-            int newID = CollegeRepository.Students.LastOrDefault().ID + 1;
-            Student student = new Student
-            {
-                ID=newID,
                 StudentName= studentDTO.StudentName,
-                Roll= studentDTO.Roll,
-                Symbol= studentDTO.Symbol,
+                Email = studentDTO.Email,
+                Address = studentDTO.Address,
             };
             studentDTO.ID =student.ID;
-            CollegeRepository.Students.Add(student);
+            _dbContext.Students.Add(student);
+            _dbContext.SaveChanges();
             //return Ok(student);
             return CreatedAtRoute("GetAStudentByID", new { id = studentDTO.ID} , studentDTO);//give the url for newly created Student , 201 
         }
@@ -116,13 +118,14 @@ namespace WebAPI_Learn.Controllers
         [HttpPut("update")]
         ///api/Students/update
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public ActionResult<Student> UpdateStudent([FromBody] StudentDTO studentDTO)
+        public ActionResult<StudentModel> UpdateStudent([FromBody] StudentDTO studentDTO)
         {
             if(studentDTO == null)
             {
                 return BadRequest();
             }
-            var existingStudent= CollegeRepository.Students.Where(s=>s.ID==studentDTO.ID).FirstOrDefault();
+            var existingStudent= _dbContext.Students.Where(s=>s.ID==studentDTO.ID).FirstOrDefault();
+            _dbContext.SaveChanges();
             existingStudent.StudentName=studentDTO.StudentName;
             return NoContent();
         }

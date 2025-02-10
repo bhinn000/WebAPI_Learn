@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebAPI_Learn.Data.Config;
+using WebAPI_Learn.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebAPI_Learn.Data
@@ -10,7 +11,7 @@ namespace WebAPI_Learn.Data
         { 
                
         }
-        DbSet<Student> Students { get; set; } // for table Student of database CollegeDB (CollegeDBContext)
+        public DbSet<StudentData> Students { get; set; } // for table Student of database CollegeDB (CollegeDBContext)
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

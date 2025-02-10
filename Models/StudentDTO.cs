@@ -14,19 +14,21 @@ namespace WebAPI_Learn.Models
         public string StudentName { get; set; }
 
         //[ValidateNever]
-        [RollCheckValidator]
-        public int Roll { get; set; }
+        //[RollCheckValidator]
+        //public int Roll { get; set; }
 
-        [Required(ErrorMessage = "Symbol is required")]
-        public string Symbol { get; set; }
+        //[Required(ErrorMessage = "Symbol is required")]
+        //public string Symbol { get; set; }
 
-        //[EmailAddress]
-        //public string Email { get; set; }
+        [EmailAddress]
+        public string Email { get; set; }
 
-        public string Password { get; set; }
+        public string Address { get; set; }
 
-        //[Compare(nameof(Password))] //compares the value of Password with ConfirmPassword
-        public string ConfirmPassword { get; set; }
+        //public string Password { get; set; }
+
+        ////[Compare(nameof(Password))] //compares the value of Password with ConfirmPassword
+        //public string ConfirmPassword { get; set; }
 
     }
 }
