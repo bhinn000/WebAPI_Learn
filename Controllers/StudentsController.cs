@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebAPI_Learn.Models;
 using WebAPI_Learn.Data;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace WebAPI_Learn.Controllers
@@ -31,20 +32,20 @@ namespace WebAPI_Learn.Controllers
         }
 
         [HttpGet("All" , Name = "GetAllStudentName")] //get all students
-        public IEnumerable<StudentDTO> GetAllStudentName()
+        public async Task<IEnumerable<StudentDTO>> GetAllStudentNameAsync()
         {
             //_myLoggings.Log("My message");// injecting services in controller
             _logger.LogInformation("All the students have been fetched");
             //return CollegeRepository.Students;
             //business logic level which will convert the data from dll , use dto concept here
             //var StudentDTO = new List<StudentDTO>();
-            var StudentDTO1 = _dbContext.Students.Select(s => new StudentDTO() //now convert student list to studentDto list
+            var StudentDTO1 = await _dbContext.Students.Select(s => new StudentDTO() //now convert student list to studentDto list
             {
                 ID=s.ID,
                 Email=s.Email,
                 Address=s.Address,
                 StudentName=s.StudentName,
-            }).ToList();
+            }).ToListAsync();
             return StudentDTO1;
             
         }
@@ -56,13 +57,13 @@ namespace WebAPI_Learn.Controllers
         //}
 
         [HttpGet("{id:int}", Name = "GetAStudentByID")] //take id of type integer
-        public ActionResult<StudentDTO> GetAStudentByID(int id)
+        public async Task<ActionResult<StudentDTO>> GetAStudentByIDAsync(int id)
         {
             if (id <= 0)
             {
                 return BadRequest();//400 --client error ; 500 --server error
             }
-            var student = _dbContext.Students.Where(n => n.ID == id).FirstOrDefault();
+            var student = await _dbContext.Students.Where(n => n.ID == id).FirstOrDefaultAsync();
             if (student == null)
             {
                 _logger.LogWarning($"The id {id} doesnt exist");
@@ -80,16 +81,16 @@ namespace WebAPI_Learn.Controllers
 
         [HttpDelete("{id}", Name = "DeleteAStudentByID")]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public bool DeleteStudent(int id)
+        public async Task<bool> DeleteStudent(int id)
         {
-            var student = _dbContext.Students.Where(n => n.ID == id).FirstOrDefault();
+            var student =await  _dbContext.Students.Where(n => n.ID == id).FirstOrDefaultAsync();
             _dbContext.Students.Remove(student);
             return true;
         }
 
         //**HTTP POST
         [HttpPost("create")] //api/Students/create
-        public ActionResult<StudentModel> CreateStudent([FromBody] StudentDTO studentDTO) //creating 'Student' from 'StudentDTO'
+        public async Task<ActionResult<StudentModel>> CreateStudent([FromBody] StudentDTO studentDTO) //creating 'Student' from 'StudentDTO'
         {
             if (studentDTO == null) 
             {
@@ -111,8 +112,8 @@ namespace WebAPI_Learn.Controllers
             };
 
             //studentDTO.ID =student.ID;
-            _dbContext.Students.Add(student);
-            _dbContext.SaveChanges();
+            _dbContext.Students.AddAsync(student);
+            _dbContext.SaveChangesAsync();
             //return Ok(student);
             return CreatedAtRoute("GetAStudentByID", new { id = studentDTO.ID} , studentDTO);//give the url for newly created Student , 201 
         }
@@ -120,13 +121,13 @@ namespace WebAPI_Learn.Controllers
         [HttpPut("update")]
         ///api/Students/update
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public ActionResult<StudentModel> UpdateStudent([FromBody] StudentDTO studentDTO)
+        public async Task<ActionResult<StudentModel>> UpdateStudent([FromBody] StudentDTO studentDTO)
         {
             if(studentDTO == null)
             {
                 return BadRequest();
             }
-            var existingStudent= _dbContext.Students.Where(s=>s.ID==studentDTO.ID).FirstOrDefault();
+            var existingStudent=await _dbContext.Students.Where(s=>s.ID==studentDTO.ID).FirstOrDefaultAsync();
             existingStudent.StudentName=studentDTO.StudentName;
             _dbContext.SaveChanges();
             return NoContent();
