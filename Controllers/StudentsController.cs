@@ -38,7 +38,7 @@ namespace WebAPI_Learn.Controllers
         public async Task<ActionResult<IEnumerable<StudentDTO>>> GetAllStudentNameAsync()
         {
             //_myLoggings.Log("My message");// injecting services in controller
-            _logger.LogInformation("All the students have been fetched");
+                _logger.LogInformation("All the students have been fetched");
             //return CollegeRepository.Students;
             //business logic level which will convert the data from dll , use dto concept here
 
@@ -46,8 +46,7 @@ namespace WebAPI_Learn.Controllers
 
             var StudentDTO1 = _mapper.Map<List<StudentDTO>>(students);
 
-            return Ok(StudentDTO1);
-            
+            return Ok(StudentDTO1);            
         }
 
         //[HttpGet("{sym:alpha}", Name = "GetAStudentBySymbol")] //https://localhost:7226/api/Students/GetAStudentBySymbol?symbol1=A10
@@ -113,8 +112,10 @@ namespace WebAPI_Learn.Controllers
             //    Address = studentDTO.Address,
             //    ID=studentDTO.ID
             //};
-            var student = _mapper.Map<StudentData>(studentDTO);
-            studentDTO.ID =student.ID;
+
+            // now using automapper , we can skip above "student"
+            var student = _mapper.Map<StudentData>(studentDTO); //this needs both class to have same named variables
+            //studentDTO.ID =student.ID;
             await _dbContext.Students.AddAsync(student);
             await _dbContext.SaveChangesAsync();
             //return Ok(student);

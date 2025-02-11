@@ -13,7 +13,17 @@ namespace WebAPI_Learn.Configuration
     {
         public AutoMapConfig()
         {
-            CreateMap<StudentData, StudentDTO>().ReverseMap();
+            CreateMap<StudentData, StudentDTO>().ReverseMap(); //this works only when there is similar named propeties in both class
+
+            //this works  when there is different named propeties in both class (Name and StudentName)
+            //CreateMap<StudentData, StudentDTO>().ForMember(n => n.StudentName, opt => opt.MapFrom(x => x.Name)).ReverseMap();
+
+            //to ignore specific property to get mapped
+            //CreateMap<StudentData, StudentDTO>().ReverseMap().ForMember(n => n.StudentName, opt => opt.Ignore());
+            //CreateMap<StudentData, StudentDTO>().ForMember(n => n.StudentName, opt => opt.Ignore()).ReverseMap();
+
+            //to transform
+            //CreateMap<StudentDTO, StudentData>().ReverseMap().AddTransform<string>(n=>string.IsNullOrEmpty(n)?"No address found":n); //if we do this when the value for address is actually null, it gives the response to "null"
         }
     }
 }

@@ -11,9 +11,8 @@ namespace WebAPI_Learn.Data.Config
             builder.HasKey(x => x.ID);//make primary key to ID
             builder.Property(x => x.ID).UseIdentityColumn(); // auto increment new entities 
             builder.Property(n => n.StudentName).IsRequired();
-            builder.Property(n => n.StudentName).IsRequired();
             builder.Property(n => n.Address).IsRequired(false).HasMaxLength(500);
-            builder.Property(n => n.Email).IsRequired(false).HasMaxLength(500);
+            builder.Property(n => n.Email).IsRequired(false).HasMaxLength(500);//will allow Null value
 
             builder.HasData(new List<StudentData>() {
                 new StudentData{ID=1 , StudentName="Bhintuna" ,Email="b@gmail.com" , Address="Nepal"} ,
