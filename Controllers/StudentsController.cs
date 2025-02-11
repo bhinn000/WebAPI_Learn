@@ -2,6 +2,7 @@
 using WebAPI_Learn.Models;
 using WebAPI_Learn.Data;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 
 namespace WebAPI_Learn.Controllers
@@ -17,12 +18,14 @@ namespace WebAPI_Learn.Controllers
         //private readonly IMyLoggings _myLoggings;// injecting services in controller
         private readonly ILogger<StudentsController> _logger; // in built logging mechanism ; can only log to debug , console but not to db or text file
         private readonly CollegeDBContext _dbContext;
-       public StudentsController(ILogger<StudentsController> logger, CollegeDBContext dbContext)
+        private readonly IMapper _mapper;
+       public StudentsController(ILogger<StudentsController> logger, CollegeDBContext dbContext, IMapper mapper)
         {
             //_myLoggings= myLoggings;// injecting services in controller (using D.I)
             //_myLoggings = LogToDB(); //withoug using D.I.
             _logger = logger;
             _dbContext = dbContext;
+            _mapper= mapper;
         }
         //****HTTP GET
         [HttpGet] //get all students 
@@ -32,21 +35,18 @@ namespace WebAPI_Learn.Controllers
         }
 
         [HttpGet("All" , Name = "GetAllStudentName")] //get all students
-        public async Task<IEnumerable<StudentDTO>> GetAllStudentNameAsync()
+        public async Task<ActionResult<IEnumerable<StudentDTO>>> GetAllStudentNameAsync()
         {
             //_myLoggings.Log("My message");// injecting services in controller
             _logger.LogInformation("All the students have been fetched");
             //return CollegeRepository.Students;
             //business logic level which will convert the data from dll , use dto concept here
-            //var StudentDTO = new List<StudentDTO>();
-            var StudentDTO1 = await _dbContext.Students.Select(s => new StudentDTO() //now convert student list to studentDto list
-            {
-                ID=s.ID,
-                Email=s.Email,
-                Address=s.Address,
-                StudentName=s.StudentName,
-            }).ToListAsync();
-            return StudentDTO1;
+
+            var students = await _dbContext.Students.ToListAsync();
+
+            var StudentDTO1 = _mapper.Map<List<StudentDTO>>(students);
+
+            return Ok(StudentDTO1);
             
         }
 
@@ -69,13 +69,15 @@ namespace WebAPI_Learn.Controllers
                 _logger.LogWarning($"The id {id} doesnt exist");
                 return NotFound("The student is not there");//404--not found
             }
-            var studentDTO = new StudentDTO()
-            {
-                ID = student.ID,
-                Email = student.Email,
-                Address = student.Address,
-                StudentName =student.StudentName,
-            };
+            //var studentDTO = new StudentDTO()
+            //{
+            //    ID = student.ID,
+            //    Email = student.Email,
+            //    Address = student.Address,
+            //    StudentName =student.StudentName,
+            //};
+
+            var studentDTO=_mapper.Map<StudentDTO>(student);
             return Ok(studentDTO); //200
         }
 
@@ -85,16 +87,17 @@ namespace WebAPI_Learn.Controllers
         {
             var student =await  _dbContext.Students.Where(n => n.ID == id).FirstOrDefaultAsync();
             _dbContext.Students.Remove(student);
+            _dbContext.SaveChanges();
             return true;
         }
-
+            
         //**HTTP POST
         [HttpPost("create")] //api/Students/create
         public async Task<ActionResult<StudentModel>> CreateStudent([FromBody] StudentDTO studentDTO) //creating 'Student' from 'StudentDTO'
         {
-            if (studentDTO == null) 
+            if (studentDTO == null || studentDTO.ID < 0) 
             {
-                _logger.LogError("You have to provide the model ");
+                _logger.LogError("You have to provide the correct model ");
                 return BadRequest();
             }
             //if (studentDTO.Roll < 0)
@@ -103,17 +106,17 @@ namespace WebAPI_Learn.Controllers
             //    return BadRequest(ModelState);
             //}
 
-            StudentData student = new StudentData
-            {
-                StudentName= studentDTO.StudentName,
-                Email = studentDTO.Email,
-                Address = studentDTO.Address,
-                ID=studentDTO.ID
-            };
-
-            //studentDTO.ID =student.ID;
-            _dbContext.Students.AddAsync(student);
-            _dbContext.SaveChangesAsync();
+            //StudentData student = new StudentData
+            //{
+            //    StudentName= studentDTO.StudentName,
+            //    Email = studentDTO.Email,
+            //    Address = studentDTO.Address,
+            //    ID=studentDTO.ID
+            //};
+            var student = _mapper.Map<StudentData>(studentDTO);
+            studentDTO.ID =student.ID;
+            await _dbContext.Students.AddAsync(student);
+            await _dbContext.SaveChangesAsync();
             //return Ok(student);
             return CreatedAtRoute("GetAStudentByID", new { id = studentDTO.ID} , studentDTO);//give the url for newly created Student , 201 
         }
