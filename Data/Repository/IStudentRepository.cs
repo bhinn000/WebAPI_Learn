@@ -10,7 +10,7 @@ namespace WebAPI_Learn.Data.Repository
         //we have to return the type that we have received from db
         Task<List<StudentData>> GetAllAsync();
         Task<StudentData> GetByIDAsync(int id);
-        Task<int> DeleteAsync(StudentData student);
+        Task<int> DeleteAsync(int id);
         Task CreateStudentAsync(StudentData student);
         Task<int> UpdateStudentAsync(StudentDTO studentDTO);
     }

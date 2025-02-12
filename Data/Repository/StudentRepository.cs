@@ -19,9 +19,10 @@ namespace WebAPI_Learn.Data.Repository
             await _dbContext.SaveChangesAsync();
         }
             
-        public async Task<int> DeleteAsync(StudentData student)
+        public async Task<int> DeleteAsync(int id)
         {
-             _dbContext.Students.Remove(student);
+            var student = await _dbContext.Students.Where(n => n.ID == id).FirstOrDefaultAsync();
+            _dbContext.Students.Remove(student);
             return  await _dbContext.SaveChangesAsync();
         }
 

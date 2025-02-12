@@ -19,6 +19,7 @@ builder.Services.AddControllers(); //adding inbuilt service
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddAutoMapper(typeof(AutoMapConfig));
 builder.Services.AddScoped<IStudentRepository , StudentRepository>();
+builder.Services.AddScoped(typeof(ICollegeRepository<>), typeof(ICollegeRepository<>)); //adding generic repository to service
 builder.Services.AddEndpointsApiExplorer(); 
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IMyLoggings, LogToFile>(); //registering custom service

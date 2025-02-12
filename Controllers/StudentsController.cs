@@ -21,13 +21,13 @@ namespace WebAPI_Learn.Controllers
         private readonly CollegeDBContext _dbContext;
         private readonly IMapper _mapper;
         private readonly IStudentRepository _studentRepository;
-       public StudentsController(ILogger<StudentsController> logger, CollegeDBContext dbContext, IMapper mapper , IStudentRepository studentRepository)
+        public StudentsController(ILogger<StudentsController> logger,IMapper mapper , IStudentRepository studentRepository, CollegeDBContext dbContext)
         {
             //_myLoggings= myLoggings;// injecting services in controller (using D.I)
             //_myLoggings = LogToDB(); //withoug using D.I.
             _logger = logger;
             _dbContext = dbContext;
-            _mapper= mapper;
+            _mapper = mapper;
             _studentRepository = studentRepository;
         }
         //****HTTP GET
@@ -87,8 +87,7 @@ namespace WebAPI_Learn.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<bool> DeleteStudent(int id)
         {
-            var student =await  _dbContext.Students.Where(n => n.ID == id).FirstOrDefaultAsync();
-            await  _studentRepository.DeleteAsync(student);
+            await _studentRepository.DeleteAsync(id);
             return true;
         }
             //to only keep related to controller , removing database logic from controller
