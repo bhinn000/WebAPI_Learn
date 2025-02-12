@@ -20,8 +20,9 @@ namespace WebAPI_Learn.Controllers
         private readonly ILogger<StudentsController> _logger; // in built logging mechanism ; can only log to debug , console but not to db or text file
         private readonly CollegeDBContext _dbContext;
         private readonly IMapper _mapper;
-        private readonly IStudentRepository _studentRepository;
-        public StudentsController(ILogger<StudentsController> logger,IMapper mapper , IStudentRepository studentRepository, CollegeDBContext dbContext)
+        //private readonly IStudentRepository _studentRepository;
+        private readonly ICollegeRepository<StudentData> _studentRepository;
+        public StudentsController(ILogger<StudentsController> logger,IMapper mapper , ICollegeRepository<StudentData> studentRepository, CollegeDBContext dbContext)
         {
             //_myLoggings= myLoggings;// injecting services in controller (using D.I)
             //_myLoggings = LogToDB(); //withoug using D.I.
@@ -65,7 +66,7 @@ namespace WebAPI_Learn.Controllers
             {
                 return BadRequest();//400 --client error ; 500 --server error
             }
-            var student =await _studentRepository.GetByIDAsync(id);
+            var student =await _studentRepository.GetByIDAsync(n => n.ID == id);
             if (student == null)
             {
                 _logger.LogWarning($"The id {id} doesnt exist");
@@ -87,7 +88,7 @@ namespace WebAPI_Learn.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<bool> DeleteStudent(int id)
         {
-            await _studentRepository.DeleteAsync(id);
+            await _studentRepository.DeleteAsync(n => n.ID == id);
             return true;
         }
             //to only keep related to controller , removing database logic from controller
@@ -110,13 +111,21 @@ namespace WebAPI_Learn.Controllers
         [HttpPut("update")]
         ///api/Students/update
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult<StudentModel>> UpdateStudent([FromBody] StudentDTO studentDTO)
+        public async Task<ActionResult<StudentModel>> UpdateStudent([FromBody] StudentDTO studentDTO, int id)
         {
+            //StudentDTO studentDTOController = studentDTO;
             if(studentDTO == null)
             {
                 return BadRequest();
             }
-            await _studentRepository.UpdateStudentAsync(studentDTO);
+
+            var existingStudent = await _studentRepository.GetByIDAsync(n => n.ID == id); // Ensure this method is available
+            if (existingStudent == null)
+            {
+                return NotFound($"Student with ID {id} not found.");
+            }
+
+            await _studentRepository.UpdateStudentAsync(s => s.ID == studentDTO.ID, studentDTO);
             return NoContent();
         }
     }
