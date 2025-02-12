@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using WebAPI_Learn.MiddleWare;
 using static WebAPI_Learn.DEPENDENCYINJECTION.ConstructorDI;
 using WebAPI_Learn.Configuration;
+using WebAPI_Learn.Data.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders(); //by default , it include console , debug and event window
@@ -17,6 +18,7 @@ builder.Logging.AddConsole();
 builder.Services.AddControllers(); //adding inbuilt service
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddAutoMapper(typeof(AutoMapConfig));
+builder.Services.AddScoped<IStudentRepository , StudentRepository>();
 builder.Services.AddEndpointsApiExplorer(); 
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IMyLoggings, LogToFile>(); //registering custom service

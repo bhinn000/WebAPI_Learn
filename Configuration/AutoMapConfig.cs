@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using WebAPI_Learn.Models;
 using WebAPI_Learn.Data;
+using Microsoft.IdentityModel.Tokens;
 
 namespace WebAPI_Learn.Configuration
 {
@@ -24,6 +25,8 @@ namespace WebAPI_Learn.Configuration
 
             //to transform
             //CreateMap<StudentDTO, StudentData>().ReverseMap().AddTransform<string>(n=>string.IsNullOrEmpty(n)?"No address found":n); //if we do this when the value for address is actually null, it gives the response to "null"
+            CreateMap<StudentDTO, StudentData>().ReverseMap().ForMember(n => n.Address, opt=>opt.MapFrom(n=> string.IsNullOrEmpty(n.Address) ? "No address found" : n.Address));
+          
         }
     }
 }

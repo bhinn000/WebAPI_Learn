@@ -3,6 +3,7 @@ using WebAPI_Learn.Models;
 using WebAPI_Learn.Data;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using WebAPI_Learn.Data.Repository;
 
 
 namespace WebAPI_Learn.Controllers
@@ -19,13 +20,15 @@ namespace WebAPI_Learn.Controllers
         private readonly ILogger<StudentsController> _logger; // in built logging mechanism ; can only log to debug , console but not to db or text file
         private readonly CollegeDBContext _dbContext;
         private readonly IMapper _mapper;
-       public StudentsController(ILogger<StudentsController> logger, CollegeDBContext dbContext, IMapper mapper)
+        private readonly IStudentRepository _studentRepository;
+       public StudentsController(ILogger<StudentsController> logger, CollegeDBContext dbContext, IMapper mapper , IStudentRepository studentRepository)
         {
             //_myLoggings= myLoggings;// injecting services in controller (using D.I)
             //_myLoggings = LogToDB(); //withoug using D.I.
             _logger = logger;
             _dbContext = dbContext;
             _mapper= mapper;
+            _studentRepository = studentRepository;
         }
         //****HTTP GET
         [HttpGet] //get all students 
@@ -42,7 +45,7 @@ namespace WebAPI_Learn.Controllers
             //return CollegeRepository.Students;
             //business logic level which will convert the data from dll , use dto concept here
 
-            var students = await _dbContext.Students.ToListAsync();
+            var students = await _studentRepository.GetAllAsync();
 
             var StudentDTO1 = _mapper.Map<List<StudentDTO>>(students);
 
@@ -62,7 +65,7 @@ namespace WebAPI_Learn.Controllers
             {
                 return BadRequest();//400 --client error ; 500 --server error
             }
-            var student = await _dbContext.Students.Where(n => n.ID == id).FirstOrDefaultAsync();
+            var student =await _studentRepository.GetByIDAsync(id);
             if (student == null)
             {
                 _logger.LogWarning($"The id {id} doesnt exist");
@@ -85,39 +88,22 @@ namespace WebAPI_Learn.Controllers
         public async Task<bool> DeleteStudent(int id)
         {
             var student =await  _dbContext.Students.Where(n => n.ID == id).FirstOrDefaultAsync();
-            _dbContext.Students.Remove(student);
-            _dbContext.SaveChanges();
+            await  _studentRepository.DeleteAsync(student);
             return true;
         }
-            
+            //to only keep related to controller , removing database logic from controller
         //**HTTP POST
         [HttpPost("create")] //api/Students/create
-        public async Task<ActionResult<StudentModel>> CreateStudent([FromBody] StudentDTO studentDTO) //creating 'Student' from 'StudentDTO'
+        public async Task<ActionResult<StudentData>> CreateStudent([FromBody] StudentDTO studentDTO) //creating 'Student' from 'StudentDTO'
         {
             if (studentDTO == null || studentDTO.ID < 0) 
             {
                 _logger.LogError("You have to provide the correct model ");
                 return BadRequest();
             }
-            //if (studentDTO.Roll < 0)
-            //{
-            //    ModelState.AddModelError("Roll number error", "Roll number cant be negtive");
-            //    return BadRequest(ModelState);
-            //}
 
-            //StudentData student = new StudentData
-            //{
-            //    StudentName= studentDTO.StudentName,
-            //    Email = studentDTO.Email,
-            //    Address = studentDTO.Address,
-            //    ID=studentDTO.ID
-            //};
-
-            // now using automapper , we can skip above "student"
             var student = _mapper.Map<StudentData>(studentDTO); //this needs both class to have same named variables
-            //studentDTO.ID =student.ID;
-            await _dbContext.Students.AddAsync(student);
-            await _dbContext.SaveChangesAsync();
+            await _studentRepository.CreateStudentAsync(student);
             //return Ok(student);
             return CreatedAtRoute("GetAStudentByID", new { id = studentDTO.ID} , studentDTO);//give the url for newly created Student , 201 
         }
@@ -131,9 +117,7 @@ namespace WebAPI_Learn.Controllers
             {
                 return BadRequest();
             }
-            var existingStudent=await _dbContext.Students.Where(s=>s.ID==studentDTO.ID).FirstOrDefaultAsync();
-            existingStudent.StudentName=studentDTO.StudentName;
-            _dbContext.SaveChanges();
+            await _studentRepository.UpdateStudentAsync(studentDTO);
             return NoContent();
         }
     }

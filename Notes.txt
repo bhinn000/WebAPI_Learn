@@ -131,3 +131,6 @@ DEPENDENCY INJECTION
 
 
 ***
+
+DbContext is the bridge between your C# application and the database.
+If you want to add, retrieve, update, or delete data, the manager (i.e., DbContext) is responsible for sending the proper instructions to the database.
