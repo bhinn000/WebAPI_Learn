@@ -10,6 +10,6 @@ namespace WebAPI_Learn.Data.Repository
         Task<T> GetByIDAsync(Expression<Func<T, bool>> filter);
         Task<int> DeleteAsync(Expression<Func<T, bool>> filter);
         Task CreateStudentAsync(T dbRecord);
-        Task<int> UpdateStudentAsync(Expression<Func<T, bool>> filter, T dto);
+        Task<int> UpdateStudentAsync(Expression<Func<T, bool>> filter); //update logic is wrong
     }
 }

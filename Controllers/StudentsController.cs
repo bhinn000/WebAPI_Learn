@@ -125,7 +125,7 @@ namespace WebAPI_Learn.Controllers
                 return NotFound($"Student with ID {id} not found.");
             }
 
-            await _studentRepository.UpdateStudentAsync(s => s.ID == studentDTO.ID, studentDTO);
+            await _studentRepository.UpdateStudentAsync(s => s.ID == studentDTO.ID);
             return NoContent();
         }
     }
